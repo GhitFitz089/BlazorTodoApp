@@ -11,18 +11,26 @@
 
 <input type="text" placeholder="Nuovo compito..." @bind="newTodo" />
 <button @onclick="AddTodo">Aggiungi</button>
+@if(!string.IsNullOrEmpty(errorMessage)) // se la variabile errorMessage è diversa da "" allora significa che è stato rilevato un errore e quindi
+{
+    <p style="color: red;">@errorMessage</p> // andrò a stampare il messaggio di errore (tag p dentro quadre con stile color rosso)
+}
+
 <ul>
     @foreach (var todo in todos)
     {
         <li class="@(todo.IsCompleted ? "fatto" : "")">
             <input type="checkbox" @bind="todo.IsCompleted" />
-            @todo.Title</li>
+            @todo.Title
+            <button @onclick="() => DeleteTodo(todo)">Elimina</button>
+        </li>
     }
     
 </ul>
 
 @code {
     string newTodo;
+    private string errorMessage = "";
 
     private void AddTodo()
     {
@@ -30,11 +38,14 @@
         {
             todos.Add(new TodoItem { Title = newTodo, IsCompleted = false });
             newTodo = "";
+            errorMessage = ""; // Resetta il messaggio di errore se l'aggiunta è riuscita
         }
         else {
-            // Opzionalmente, puoi mostrare un messaggio di errore o semplicemente ignorare l'aggiunta
+            errorMessage = "Inserisci un todo valido, non puoi aggiungere un todo vuoto!"; 
         }
     }
+
+    private void DeleteTodo(TodoItem itemToRemove) => todos.Remove(itemToRemove);
 
     public class TodoItem
     {
