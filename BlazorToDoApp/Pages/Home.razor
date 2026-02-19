@@ -1,0 +1,51 @@
+﻿@page "/" 
+
+<PageTitle>Home</PageTitle>
+<style>
+    .fatto {
+        text-decoration: line-through;
+        color: gray;
+    }
+</style>
+<h1>Le mie cose da fare</h1>
+
+<input type="text" placeholder="Nuovo compito..." @bind="newTodo" />
+<button @onclick="AddTodo">Aggiungi</button>
+<ul>
+    @foreach (var todo in todos)
+    {
+        <li class="@(todo.IsCompleted ? "fatto" : "")">
+            <input type="checkbox" @bind="todo.IsCompleted" />
+            @todo.Title</li>
+    }
+    
+</ul>
+
+@code {
+    string newTodo;
+
+    private void AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            todos.Add(new TodoItem { Title = newTodo, IsCompleted = false });
+            newTodo = "";
+        }
+        else {
+            // Opzionalmente, puoi mostrare un messaggio di errore o semplicemente ignorare l'aggiunta
+        }
+    }
+
+    public class TodoItem
+    {
+        public string Title { get; set; }
+        public bool IsCompleted { get; set; }
+    }
+    private List<TodoItem> todos = new List<TodoItem> 
+    // la variabile todos è una lista di oggetti di tipo TodoItem, e inizializziamo questa lista con tre elementi
+    {
+        new TodoItem { Title = "Fare la spesa", IsCompleted = false },
+        new TodoItem { Title = "Portare fuori il gatto", IsCompleted = false },
+        new TodoItem { Title = "Finire il progetto Blazor", IsCompleted = true }
+    };
+}
